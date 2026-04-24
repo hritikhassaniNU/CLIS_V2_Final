@@ -2,7 +2,7 @@
 CLIS-RL: GRADE Evidence Grading Tool
 =====================================
 Course:  INFO 7375 — Generative AI & Prompt Engineering
-Student: Hritik Ram | Northeastern University
+Student: Hritik Hassani | Northeastern University
 Assignment: Take-Home Final — Custom Tool Development
 
 GRADE Methodology Reference:

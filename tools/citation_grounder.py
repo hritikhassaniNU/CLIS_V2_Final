@@ -1,7 +1,7 @@
 """
 CLIS V2 — Citation Grounding Engine
 =====================================
-Student: Hritik Ram | Northeastern University
+Student: Hritik Hassani | Northeastern University
 
 Maps every sentence in LLM output to its source passage.
 This is the core safety feature that separates CLIS from

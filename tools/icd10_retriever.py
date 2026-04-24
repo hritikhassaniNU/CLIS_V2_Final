@@ -2,7 +2,7 @@
 CLIS V2: ICD-10-CM RAG Retrieval Module
 =========================================
 Course:  INFO 7375 — Generative AI & Prompt Engineering
-Student: Hritik Ram | Northeastern University
+Student: Hritik Hassani | Northeastern University
 Final Project: CLIS V2
 
 Implements RAG over ICD-10-CM Official Guidelines (CMS).

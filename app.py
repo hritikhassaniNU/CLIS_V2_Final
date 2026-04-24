@@ -1,7 +1,7 @@
 """
 CLIS V2 — Clinical Literature Intelligence System
 ===================================================
-Student: Hritik Ram | Northeastern University
+Student: Hritik Hassani | Northeastern University
 Course:  INFO 7375 — Generative AI & Prompt Engineering
 
 Production UI — clean medical-grade design
@@ -529,7 +529,7 @@ with st.sidebar:
             gc={"A":"#0a5c45","B":"#92600a","C":"#9c2b2b","D":"#5a5a5a"}.get(h.get("grade","C"),"#6b7a8d")
             st.markdown(f'<div style="background:#111f2e;border:0.5px solid #1e3448;border-radius:6px;padding:6px 10px;margin-bottom:4px"><div style="font-size:.68rem;color:#4a6070;font-family:IBM Plex Mono">{h["ts"]} · <span style="color:{gc}">Grade {h.get("grade","?")}</span></div><div style="font-size:.74rem;color:#8aabb8;margin-top:2px;line-height:1.4">{q_s}</div></div>', unsafe_allow_html=True)
 
-    st.markdown('<div style="border-top:1px solid #1e3448;padding-top:.8rem;margin-top:1rem"><div style="font-size:.65rem;color:#4a6070;line-height:1.6">Hritik Ram · NEU<br>INFO 7375 · Spring 2026<br>Session: {}</div></div>'.format(st.session_state.session_id), unsafe_allow_html=True)
+    st.markdown('<div style="border-top:1px solid #1e3448;padding-top:.8rem;margin-top:1rem"><div style="font-size:.65rem;color:#4a6070;line-height:1.6">Hritik Hassani · NEU<br>INFO 7375 · Spring 2026<br>Session: {}</div></div>'.format(st.session_state.session_id), unsafe_allow_html=True)
 
 # ── Header ────────────────────────────────────────────────────
 st.markdown("""

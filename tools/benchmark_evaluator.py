@@ -2,7 +2,7 @@
 CLIS V2: Benchmark Evaluation Module
 ======================================
 Course:  INFO 7375 — Generative AI & Prompt Engineering
-Student: Hritik Ram | Northeastern University
+Student: Hritik Hassani | Northeastern University
 Final Project: CLIS V2
 
 Implements the 10 benchmark test cases from the project proposal.

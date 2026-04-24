@@ -3,7 +3,7 @@
 > **One app. One command: `streamlit run app.py`**
 
 **Course:** INFO 7375 — Generative AI & Prompt Engineering
-**Student:** Hritik Ram | Northeastern University | Spring 2026
+**Student:** Hritik Hassani | Northeastern University | Spring 2026
 
 ---
 
@@ -156,4 +156,4 @@ After every search, click Helpful or Not helpful. This updates the bandit's rewa
 
 ---
 
-*Hritik Ram · Northeastern University · INFO 7375 · Spring 2026*
+*Hritik Hassani · Northeastern University · INFO 7375 · Spring 2026*
