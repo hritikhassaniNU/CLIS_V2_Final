@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLIS V2 — Clinical Literature Intelligence System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:     #0a5c45;
+  --green-lt:  #1d9e75;
+  --green-dim: rgba(10,92,69,0.15);
+  --green-glow:rgba(29,158,117,0.08);
+  --bg:        #060d0a;
+  --bg2:       #0a1410;
+  --bg3:       #0f1e18;
+  --border:    rgba(29,158,117,0.18);
+  --border-lt: rgba(29,158,117,0.35);
+  --text:      #e8f5f0;
+  --muted:     #7eb8a4;
+  --dim:       #3a5a4a;
+  --mono:      'IBM Plex Mono', monospace;
+  --sans:      'IBM Plex Sans', sans-serif;
+  --serif:     'DM Serif Display', serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── Grid noise bg ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='rgba(29,158,117,0.06)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6,13,10,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--green-lt);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  font-family: var(--mono);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--green-lt); }
+.nav-cta {
+  background: var(--green);
+  color: #fff !important;
+  padding: 0.4rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.78rem !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--green-lt) !important; }
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8rem 2rem 6rem;
+  overflow: hidden;
+  z-index: 1;
+}
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(29,158,117,0.12) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+.hero-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--green-lt);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-lt);
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  margin-bottom: 1.8rem;
+  display: inline-block;
+  animation: fadeUp 0.6s ease both;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--green-lt);
+}
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 1.2rem auto 2.5rem;
+  font-weight: 300;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 3rem;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-lt);
+  color: var(--muted);
+  background: var(--green-glow);
+}
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+.btn-primary {
+  background: var(--green);
+  color: #fff;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.btn-primary:hover {
+  background: var(--green-lt);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(29,158,117,0.3);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--muted);
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--border-lt);
+  transition: all 0.2s;
+}
+.btn-secondary:hover {
+  background: var(--green-dim);
+  color: var(--green-lt);
+  transform: translateY(-2px);
+}
+
+/* ── Stats bar ── */
+.stats-bar {
+  position: relative;
+  z-index: 1;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+  gap: 0;
+}
+.stat-item {
+  text-align: center;
+  padding: 0.5rem 1.5rem;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  color: var(--green-lt);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ── Sections ── */
+section {
+  position: relative;
+  z-index: 1;
+  padding: 6rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+section.full { max-width: 100%; padding: 6rem 0; }
+.section-tag {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--green-lt);
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1.2rem;
+}
+.section-sub {
+  font-size: 0.95rem;
+  color: var(--muted);
+  max-width: 520px;
+  font-weight: 300;
+  margin-bottom: 3rem;
+}
+
+/* ── Pipeline diagram ── */
+.pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.pipe-step {
+  flex: 1;
+  min-width: 140px;
+  padding: 1.5rem 1.2rem;
+  border-right: 1px solid var(--border);
+  position: relative;
+  transition: background 0.2s;
+}
+.pipe-step:last-child { border-right: none; }
+.pipe-step:hover { background: var(--green-glow); }
+.pipe-num {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--green-lt);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+.pipe-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+.pipe-detail {
+  font-size: 0.72rem;
+  color: var(--dim);
+  font-family: var(--mono);
+  line-height: 1.5;
+}
+
+/* ── Feature grid ── */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.feature-card {
+  background: var(--bg2);
+  padding: 1.8rem;
+  transition: background 0.2s;
+}
+.feature-card:hover { background: var(--bg3); }
+.feature-icon {
+  width: 36px; height: 36px;
+  background: var(--green-dim);
+  border: 1px solid var(--border-lt);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+.feature-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+.feature-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.feature-tag {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--green-lt);
+  background: var(--green-glow);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* ── Metrics table ── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.metric-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.metric-val {
+  font-family: var(--serif);
+  font-size: 2rem;
+  color: var(--green-lt);
+  white-space: nowrap;
+  line-height: 1;
+}
+.metric-info-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.metric-info-note {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--dim);
+}
+
+/* ── Tech stack ── */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 10px;
+}
+.tech-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  transition: border-color 0.2s;
+}
+.tech-card:hover { border-color: var(--border-lt); }
+.tech-cat {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 4px;
+}
+.tech-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.tech-note {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ── Notebooks ── */
+.nb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 10px;
+}
+.nb-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+}
+.nb-num {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--green-lt);
+  margin-bottom: 4px;
+}
+.nb-title { font-size: 0.82rem; font-weight: 500; color: var(--text); }
+.nb-desc { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+/* ── Ethics ── */
+.ethics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+  gap: 10px;
+}
+.ethics-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem 1.4rem;
+}
+.ethics-title { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.ethics-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+
+/* ── CTA ── */
+.cta-section {
+  position: relative;
+  z-index: 1;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+.cta-section h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin-bottom: 1rem;
+}
+.cta-section p {
+  color: var(--muted);
+  max-width: 440px;
+  margin: 0 auto 2rem;
+  font-size: 0.95rem;
+}
+
+/* ── Footer ── */
+footer {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--dim);
+}
+footer a { color: var(--green-lt); text-decoration: none; }
+
+/* ── Divider ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* ── Anim ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--green); border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+  .pipe-step { min-width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">⚕ CLIS V2</a>
+  <div class="nav-links">
+    <a href="#pipeline">Pipeline</a>
+    <a href="#features">Features</a>
+    <a href="#results">Results</a>
+    <a href="#notebooks">Notebooks</a>
+    <a href="https://github.com/hritikhassani/CLIS_V2" target="_blank">GitHub</a>
+  </div>
+  <a href="https://github.com/hritikhassani/CLIS_V2" target="_blank" class="nav-links"><a href="https://github.com/hritikhassani/CLIS_V2" target="_blank" class="nav-cta nav-links" style="text-decoration:none;color:#fff">View on GitHub</a></a>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-label">INFO 7375 · Final Project · Northeastern University</div>
+  <h1>Clinical Literature<br><em>Intelligence System</em></h1>
+  <p class="hero-sub">A production-grade clinical decision support system combining RAG, Reinforcement Learning, and LLM synthesis to help physicians find, evaluate, and apply peer-reviewed medical evidence.</p>
+  <div class="hero-badges">
+    <span class="badge">UCB Bandit</span>
+    <span class="badge">REINFORCE</span>
+    <span class="badge">PubMed RAG</span>
+    <span class="badge">GRADE Evidence</span>
+    <span class="badge">Citation Grounding</span>
+    <span class="badge">RLHF Feedback</span>
+    <span class="badge">ICD-10 RAG</span>
+    <span class="badge">Groq · Llama 3.3 70B</span>
+    <span class="badge">Hallucination Trap</span>
+    <span class="badge">Knowledge Graph</span>
+    <span class="badge">NNT Extractor</span>
+  </div>
+  <div class="hero-actions">
+    <a href="https://github.com/hritikhassani/CLIS_V2" target="_blank" class="btn-primary">View on GitHub</a>
+    <a href="#pipeline" class="btn-secondary">See how it works</a>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Stats -->
+<div class="stats-bar reveal">
+  <div class="stat-item">
+    <div class="stat-num">+4.01%</div>
+    <div class="stat-label">UCB over random</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">2.735</div>
+    <div class="stat-label">Cohen's d (large)</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">72.6%</div>
+    <div class="stat-label">REINFORCE loss reduction</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">10/10</div>
+    <div class="stat-label">Benchmark tests pass</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">47</div>
+    <div class="stat-label">ICD-10 guideline sections</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">$0</div>
+    <div class="stat-label">Total infrastructure cost</div>
+  </div>
+</div>
+
+<!-- Pipeline -->
+<section id="pipeline">
+  <div class="reveal">
+    <div class="section-tag">Architecture</div>
+    <h2 class="section-title">Six-stage AI pipeline</h2>
+    <p class="section-sub">Every clinical question passes through a sequential pipeline — no stage is skipped, no data is simulated.</p>
+  </div>
+  <div class="pipeline reveal">
+    <div class="pipe-step">
+      <div class="pipe-num">01 / CLASSIFY</div>
+      <div class="pipe-name">Context detection</div>
+      <div class="pipe-detail">Question → one of 4 clinical contexts: drug efficacy, epidemiology, mechanism, treatment comparison</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02 / BANDIT</div>
+      <div class="pipe-name">UCB arm selection</div>
+      <div class="pipe-detail">Persistent SQLite UCB bandit selects the optimal PubMed query strategy from 5 arms</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03 / RETRIEVE</div>
+      <div class="pipe-name">Live PubMed query</div>
+      <div class="pipe-detail">NCBI E-utilities API — real articles only, no cached or simulated data ever shown</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04 / GRADE</div>
+      <div class="pipe-name">GRADE methodology</div>
+      <div class="pipe-detail">Groq Llama 3.3 70B grades each abstract: High / Moderate / Low / Very Low evidence</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05 / RANK</div>
+      <div class="pipe-name">REINFORCE policy</div>
+      <div class="pipe-detail">Trained policy network re-ranks articles by predicted clinical utility using 6 input features</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">06 / GROUND</div>
+      <div class="pipe-name">Citation grounding</div>
+      <div class="pipe-detail">Every LLM sentence mapped to source passage via Jaccard overlap — unverified claims flagged</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Architecture diagram -->
+<section style="padding:0 2rem 5rem;max-width:1100px;margin:0 auto">
+  <div class="reveal" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;padding:2.5rem">
+    <div style="font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green-lt);margin-bottom:1.5rem">System architecture</div>
+    <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:900px;display:block">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#1d9e75" opacity="0.7"/>
+        </marker>
+      </defs>
+      <!-- Question input -->
+      <rect x="20" y="130" width="110" height="60" rx="8" fill="#0a1a14" stroke="#1d9e75" stroke-width="1.5"/>
+      <text x="75" y="155" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9fe1cb">CLINICAL</text>
+      <text x="75" y="168" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9fe1cb">QUESTION</text>
+      <text x="75" y="181" text-anchor="middle" font-family="IBM Plex Sans" font-size="8" fill="#3a5a4a">Free text / PICO</text>
+      <!-- Arrow 1 -->
+      <line x1="130" y1="160" x2="158" y2="160" stroke="#1d9e75" stroke-width="1.2" opacity=".7" marker-end="url(#arr)"/>
+      <!-- Context classifier -->
+      <rect x="160" y="120" width="100" height="80" rx="8" fill="#0a1a14" stroke="#0f6e56" stroke-width="1"/>
+      <text x="210" y="148" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9fe1cb">CONTEXT</text>
+      <text x="210" y="161" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9fe1cb">CLASSIFY</text>
+      <text x="210" y="177" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#3a5a4a">4 contexts</text>
+      <text x="210" y="190" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#3a5a4a">rule-based</text>
+      <!-- Arrow 2 -->
+      <line x1="260" y1="160" x2="288" y2="160" stroke="#1d9e75" stroke-width="1.2" opacity=".7" marker-end="url(#arr)"/>
+      <!-- UCB Bandit -->
+      <rect x="290" y="110" width="100" height="100" rx="8" fill="#0a1a14" stroke="#0a5c45" stroke-width="1.5"/>
+      <text x="340" y="138" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1d9e75">UCB</text>
+      <text x="340" y="151" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1d9e75">BANDIT</text>
+      <text x="340" y="168" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#5a8070">5 query arms</text>
+      <text x="340" y="180" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#5a8070">SQLite persist</text>
+      <text x="340" y="192" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#5a8070">RLHF updates</text>
+      <!-- Arrow 3 -->
+      <line x1="390" y1="160" x2="418" y2="160" stroke="#1d9e75" stroke-width="1.2" opacity=".7" marker-end="url(#arr)"/>
+      <!-- PubMed -->
+      <rect x="420" y="120" width="100" height="80" rx="8" fill="#0a1a14" stroke="#0f6e56" stroke-width="1"/>
+      <text x="470" y="148" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9fe1cb">PUBMED</text>
+      <text x="470" y="161" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9fe1cb">RETRIEVE</text>
+      <text x="470" y="177" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#3a5a4a">NCBI E-utils</text>
+      <text x="470" y="190" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#3a5a4a">real articles</text>
+      <!-- Arrow 4 -->
+      <line x1="520" y1="160" x2="548" y2="160" stroke="#1d9e75" stroke-width="1.2" opacity=".7" marker-end="url(#arr)"/>
+      <!-- GRADE -->
+      <rect x="550" y="120" width="100" height="80" rx="8" fill="#0a1a14" stroke="#0f6e56" stroke-width="1"/>
+      <text x="600" y="148" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9fe1cb">GRADE</text>
+      <text x="600" y="161" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9fe1cb">EVIDENCE</text>
+      <text x="600" y="177" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#3a5a4a">Groq LLM</text>
+      <text x="600" y="190" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#3a5a4a">4-level grading</text>
+      <!-- Arrow 5 -->
+      <line x1="650" y1="160" x2="678" y2="160" stroke="#1d9e75" stroke-width="1.2" opacity=".7" marker-end="url(#arr)"/>
+      <!-- REINFORCE -->
+      <rect x="680" y="110" width="100" height="100" rx="8" fill="#0a1a14" stroke="#0a5c45" stroke-width="1.5"/>
+      <text x="730" y="138" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1d9e75">REINFORCE</text>
+      <text x="730" y="151" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1d9e75">RANK</text>
+      <text x="730" y="168" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#5a8070">3-layer MLP</text>
+      <text x="730" y="180" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#5a8070">policy gradient</text>
+      <text x="730" y="192" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#5a8070">6 features</text>
+      <!-- Arrow 6 -->
+      <line x1="780" y1="160" x2="808" y2="160" stroke="#1d9e75" stroke-width="1.2" opacity=".7" marker-end="url(#arr)"/>
+      <!-- Output -->
+      <rect x="810" y="120" width="80" height="80" rx="8" fill="#0a5c45" stroke="#1d9e75" stroke-width="1.5"/>
+      <text x="850" y="150" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#e8f5f0">GROUNDED</text>
+      <text x="850" y="163" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#e8f5f0">SUMMARY</text>
+      <text x="850" y="178" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#9fe1cb">citation</text>
+      <text x="850" y="190" text-anchor="middle" font-family="IBM Plex Sans" font-size="7.5" fill="#9fe1cb">verified</text>
+      <!-- RLHF feedback loop arrow -->
+      <path d="M 850,200 L 850,270 L 340,270 L 340,210" fill="none" stroke="#0a5c45" stroke-width="1" stroke-dasharray="4,3" opacity=".6" marker-end="url(#arr)"/>
+      <text x="595" y="285" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#0a5c45">RLHF feedback loop — physician ratings update bandit rewards</text>
+    </svg>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="reveal">
+    <div class="section-tag">Features</div>
+    <h2 class="section-title">Five tabs, eight tools</h2>
+    <p class="section-sub">Built for physicians, researchers, and clinical coders — not just as a demo.</p>
+  </div>
+  <div class="feature-grid reveal">
+    <div class="feature-card">
+      <div class="feature-icon">⚕</div>
+      <div class="feature-title">Clinical search</div>
+      <div class="feature-desc">Free text or PICO builder → full 6-stage pipeline → citation-grounded summary → RLHF feedback loop. Real PubMed only.</div>
+      <span class="feature-tag">Tab 1</span>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⊕</div>
+      <div class="feature-title">ICD-10 coding assistant</div>
+      <div class="feature-desc">TF-IDF RAG over 47 CMS ICD-10-CM FY2024 guideline sections. Groq synthesises structured coding answers with sequencing rules.</div>
+      <span class="feature-tag">Tab 2</span>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚖</div>
+      <div class="feature-title">Treatment comparison</div>
+      <div class="feature-desc">Side-by-side evidence for two treatments using independent UCB bandit queries. Head-to-head verdict with GRADE winner.</div>
+      <span class="feature-tag">Advanced Analysis</span>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">N</div>
+      <div class="feature-title">NNT / NNH extractor</div>
+      <div class="feature-desc">Regex + Groq LLM extracts Number Needed to Treat, NNH, ARR, RRR from abstracts. The most actionable statistic in EBM.</div>
+      <span class="feature-tag">Advanced Analysis</span>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">{ }</div>
+      <div class="feature-title">Structured extraction</div>
+      <div class="feature-desc">Any abstract → 13-field JSON card: study design, sample size, effect size, limitations, funding. SQLite-cached, downloadable.</div>
+      <span class="feature-tag">Advanced Analysis</span>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">o</div>
+      <div class="feature-title">Knowledge graph</div>
+      <div class="feature-desc">Interactive Plotly network from PubMed MeSH metadata. Nodes = articles, edges = shared terms + co-authors. Any research field.</div>
+      <span class="feature-tag">Advanced Analysis</span>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✓</div>
+      <div class="feature-title">Benchmark suite</div>
+      <div class="feature-desc">10 automated test cases including TC10: the CARDIAC-PREVENT hallucination trap — a trial that does not exist. All 10 pass.</div>
+      <span class="feature-tag">Tab 4</span>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">~</div>
+      <div class="feature-title">System analytics</div>
+      <div class="feature-desc">Live bandit learning curve, RLHF feedback stats, per-context arm reward matrix. Full RL interpretability dashboard.</div>
+      <span class="feature-tag">Tab 5</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- Evidence pyramid diagram -->
+<section style="padding:0 2rem 5rem;max-width:1100px;margin:0 auto">
+  <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:center">
+    <div>
+      <div style="font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green-lt);margin-bottom:.8rem">GRADE Evidence Hierarchy</div>
+      <h3 style="font-family:var(--serif);font-size:1.6rem;font-weight:400;line-height:1.3;margin-bottom:.8rem">Evidence quality<br>is always visible</h3>
+      <p style="font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:1.2rem">CLIS V2 never flattens the evidence pyramid. Every article shows its GRADE level. A physician can immediately see whether a recommendation comes from a systematic review of RCTs or a single expert opinion.</p>
+      <div style="font-family:var(--mono);font-size:.72rem;color:var(--dim)">100% study design accuracy · Groq + rule-based fallback</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.8rem">
+      <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+        <!-- Level A: Systematic Review -->
+        <polygon points="160,20 220,70 100,70" fill="#0a5c45" opacity=".9"/>
+        <text x="160" y="48" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#9fe1cb" font-weight="500">GRADE A — HIGH</text>
+        <text x="160" y="61" text-anchor="middle" font-family="IBM Plex Sans" font-size="7" fill="#5a8a70">Systematic review · Meta-analysis</text>
+        <!-- Level B: RCT -->
+        <polygon points="100,75 220,75 240,115 80,115" fill="#0f6e56" opacity=".85"/>
+        <text x="160" y="98" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#9fe1cb" font-weight="500">GRADE B — MODERATE</text>
+        <text x="160" y="111" text-anchor="middle" font-family="IBM Plex Sans" font-size="7" fill="#5a8a70">RCT · Well-designed trial</text>
+        <!-- Level C: Cohort -->
+        <polygon points="80,120 240,120 265,165 55,165" fill="#633806" opacity=".8"/>
+        <text x="160" y="146" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#fac775" font-weight="500">GRADE C — LOW</text>
+        <text x="160" y="159" text-anchor="middle" font-family="IBM Plex Sans" font-size="7" fill="#a07040">Cohort · Case-control · Observational</text>
+        <!-- Level D: Expert -->
+        <polygon points="55,170 265,170 300,220 20,220" fill="#712b13" opacity=".75"/>
+        <text x="160" y="198" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#f0997b" font-weight="500">GRADE D — VERY LOW</text>
+        <text x="160" y="211" text-anchor="middle" font-family="IBM Plex Sans" font-size="7" fill="#905040">Expert opinion · Case report</text>
+        <!-- Labels -->
+        <text x="160" y="243" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#3a5a4a">Higher = stronger evidence · Lower = weaker evidence</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Results -->
+<section id="results">
+  <div class="reveal">
+    <div class="section-tag">Results</div>
+    <h2 class="section-title">Statistically validated performance</h2>
+    <p class="section-sub">All results from 5-seed experiments. p-values computed via Welch's t-test.</p>
+  </div>
+  <div class="metrics-grid reveal">
+    <div class="metric-card">
+      <div class="metric-val">+4.01%</div>
+      <div>
+        <div class="metric-info-label">UCB Bandit improvement over random</div>
+        <div class="metric-info-note">p=0.0048 · Cohen's d=2.735 (large effect) · 5 seeds × 200 rounds</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">100%</div>
+      <div>
+        <div class="metric-info-label">Arm identification accuracy</div>
+        <div class="metric-info-note">Optimal query strategy selected in all 4 contexts · all 5 seeds</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">72.6%</div>
+      <div>
+        <div class="metric-info-label">REINFORCE policy loss reduction</div>
+        <div class="metric-info-note">±5.7% across 5 seeds · 300 episodes each · PyTorch CPU</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">10/10</div>
+      <div>
+        <div class="metric-info-label">Benchmark tests passing</div>
+        <div class="metric-info-note">3 critical tests + hallucination trap · works without Groq key</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">47</div>
+      <div>
+        <div class="metric-info-label">ICD-10 guideline sections indexed</div>
+        <div class="metric-info-note">CMS ICD-10-CM Official Guidelines FY2024 · TF-IDF RAG · SQLite cache</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">8</div>
+      <div>
+        <div class="metric-info-label">Production tools built</div>
+        <div class="metric-info-note">4,500+ lines across app.py + 8 tool modules</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- UCB Bandit performance chart -->
+<section style="padding:0 2rem 5rem;max-width:1100px;margin:0 auto">
+  <div class="reveal" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:2.5rem">
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:2rem;align-items:center">
+      <div>
+        <div style="font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green-lt);margin-bottom:.8rem">RL Performance</div>
+        <h3 style="font-family:var(--serif);font-size:1.5rem;font-weight:400;line-height:1.3;margin-bottom:.8rem">UCB Bandit vs random baseline</h3>
+        <p style="font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:1.2rem">Tested across 5 seeds, 200 rounds each. The bandit learns domain-optimal query strategies through exploration, consistently outperforming random arm selection.</p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px"><div style="width:24px;height:3px;background:#1d9e75;border-radius:2px"></div><span style="font-size:.72rem;font-family:var(--mono);color:var(--muted)">UCB Bandit  0.5820</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><div style="width:24px;height:3px;background:#3a5a4a;border-radius:2px;border:1px dashed #5a8a6a"></div><span style="font-size:.72rem;font-family:var(--mono);color:var(--dim)">Random baseline  0.5596</span></div>
+        </div>
+      </div>
+      <div>
+        <svg viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+          <!-- Grid -->
+          <line x1="60" y1="20" x2="60" y2="180" stroke="#1a3a28" stroke-width="1"/>
+          <line x1="60" y1="180" x2="460" y2="180" stroke="#1a3a28" stroke-width="1"/>
+          <!-- Y axis labels -->
+          <text x="52" y="25" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#3a5a4a">0.62</text>
+          <text x="52" y="72" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#3a5a4a">0.58</text>
+          <text x="52" y="118" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#3a5a4a">0.55</text>
+          <text x="52" y="164" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#3a5a4a">0.52</text>
+          <!-- Grid lines -->
+          <line x1="60" y1="25" x2="460" y2="25" stroke="#1a3a28" stroke-width=".5" stroke-dasharray="3,3"/>
+          <line x1="60" y1="72" x2="460" y2="72" stroke="#1a3a28" stroke-width=".5" stroke-dasharray="3,3"/>
+          <line x1="60" y1="118" x2="460" y2="118" stroke="#1a3a28" stroke-width=".5" stroke-dasharray="3,3"/>
+          <!-- Random baseline (flat dashed) -->
+          <line x1="60" y1="105" x2="460" y2="103" stroke="#3a5a4a" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <!-- UCB bandit learning curve (rises then stabilises) -->
+          <polyline points="60,155 80,148 100,140 120,132 145,126 170,120 200,114 230,108 260,103 290,97 320,93 350,90 380,88 410,86 440,85 460,83"
+            fill="none" stroke="#1d9e75" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Fill under UCB curve -->
+          <polygon points="60,155 80,148 100,140 120,132 145,126 170,120 200,114 230,108 260,103 290,97 320,93 350,90 380,88 410,86 440,85 460,83 460,180 60,180"
+            fill="#1d9e75" opacity=".07"/>
+          <!-- Annotations -->
+          <text x="290" y="90" font-family="IBM Plex Mono" font-size="8" fill="#1d9e75">UCB learns &amp; converges</text>
+          <text x="290" y="112" font-family="IBM Plex Mono" font-size="8" fill="#3a5a4a">random baseline</text>
+          <!-- X axis labels -->
+          <text x="60" y="196" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#3a5a4a">0</text>
+          <text x="160" y="196" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#3a5a4a">50</text>
+          <text x="260" y="196" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#3a5a4a">100</text>
+          <text x="360" y="196" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#3a5a4a">150</text>
+          <text x="460" y="196" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#3a5a4a">200</text>
+          <text x="260" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#3a5a4a">rounds (per seed)</text>
+          <!-- p-value annotation -->
+          <rect x="340" y="28" width="115" height="32" rx="4" fill="#0a1a14" stroke="#0a5c45" stroke-width="1"/>
+          <text x="397" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#1d9e75">p = 0.0048</text>
+          <text x="397" y="54" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#1d9e75">Cohen d = 2.735</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Notebooks -->
+<section id="notebooks">
+  <div class="reveal">
+    <div class="section-tag">Notebooks</div>
+    <h2 class="section-title">Seven experiment notebooks</h2>
+    <p class="section-sub">Each notebook is self-contained and reproducible. All results match the reported metrics.</p>
+  </div>
+  <div class="nb-grid reveal">
+    <div class="nb-card">
+      <div class="nb-num">NB1</div>
+      <div class="nb-title">Contextual UCB Bandit</div>
+      <div class="nb-desc">Domain-informed priors, 5-seed validation, regret curves, arm identification accuracy</div>
+    </div>
+    <div class="nb-card">
+      <div class="nb-num">NB2</div>
+      <div class="nb-title">REINFORCE Policy Gradient</div>
+      <div class="nb-desc">Policy network training, baseline variance reduction, episode reward curves</div>
+    </div>
+    <div class="nb-card">
+      <div class="nb-num">NB3</div>
+      <div class="nb-title">Full Pipeline Integration</div>
+      <div class="nb-desc">End-to-end pipeline: bandit → PubMed → GRADE → REINFORCE → summary</div>
+    </div>
+    <div class="nb-card">
+      <div class="nb-num">NB3b</div>
+      <div class="nb-title">Live PubMed Validation</div>
+      <div class="nb-desc">Real NCBI API calls, article retrieval confirmation, zero simulated data</div>
+    </div>
+    <div class="nb-card">
+      <div class="nb-num">NB4</div>
+      <div class="nb-title">Statistical Validation</div>
+      <div class="nb-desc">Welch t-test, Cohen's d, power analysis, 5-seed cross-validation</div>
+    </div>
+    <div class="nb-card">
+      <div class="nb-num">NB5</div>
+      <div class="nb-title">GRADE Tool Evaluation</div>
+      <div class="nb-desc">Study design classification, 6 study types, Groq + rule-based accuracy</div>
+    </div>
+    <div class="nb-card">
+      <div class="nb-num">NB6</div>
+      <div class="nb-title">Ablation Study</div>
+      <div class="nb-desc">Component contribution: with/without bandit, REINFORCE, citation grounding</div>
+    </div>
+  </div>
+</section>
+
+<!-- Tech stack -->
+<section>
+  <div class="reveal">
+    <div class="section-tag">Technology</div>
+    <h2 class="section-title">Built entirely for $0</h2>
+    <p class="section-sub">Every component uses free APIs, free tiers, or open source libraries.</p>
+  </div>
+  <div class="tech-grid reveal">
+    <div class="tech-card">
+      <div class="tech-cat">LLM</div>
+      <div class="tech-name">Groq · Llama 3.3 70B</div>
+      <div class="tech-note">Free tier · &lt;1s latency · rule-based fallback</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-cat">Literature</div>
+      <div class="tech-name">PubMed NCBI API</div>
+      <div class="tech-note">E-utilities · free · 10 req/sec with key</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-cat">RL Framework</div>
+      <div class="tech-name">PyTorch (CPU)</div>
+      <div class="tech-note">Custom UCB + REINFORCE implementation</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-cat">Vector Store</div>
+      <div class="tech-name">TF-IDF + SQLite</div>
+      <div class="tech-note">Zero external deps · stdlib only</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-cat">ICD-10 Data</div>
+      <div class="tech-name">CMS FY2024</div>
+      <div class="tech-note">47 guideline sections · official source</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-cat">UI</div>
+      <div class="tech-name">Streamlit</div>
+      <div class="tech-note">Python-native · light theme via config.toml</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-cat">Persistence</div>
+      <div class="tech-name">SQLite (stdlib)</div>
+      <div class="tech-note">Bandit state · ICD cache · struct cache</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-cat">Visualisation</div>
+      <div class="tech-name">Plotly</div>
+      <div class="tech-note">Knowledge graph · learning curve charts</div>
+    </div>
+  </div>
+</section>
+
+<!-- Ethics -->
+<section>
+  <div class="reveal">
+    <div class="section-tag">Ethics</div>
+    <h2 class="section-title">Safety by design</h2>
+    <p class="section-sub">Clinical AI safety is engineering, not an afterthought. Every feature reflects a specific safety decision.</p>
+  </div>
+  <div class="ethics-grid reveal">
+    <div class="ethics-card">
+      <div class="ethics-title">Hallucination prevention</div>
+      <div class="ethics-desc">Citation grounding maps every LLM sentence to a source passage. TC10 verifies the system refuses to fabricate results for non-existent trials.</div>
+    </div>
+    <div class="ethics-card">
+      <div class="ethics-title">Evidence transparency</div>
+      <div class="ethics-desc">GRADE methodology grades are always shown. Grade A (RCT/meta-analysis) is visually distinct from Grade D (expert opinion). No evidence pyramid flattening.</div>
+    </div>
+    <div class="ethics-card">
+      <div class="ethics-title">Real evidence only</div>
+      <div class="ethics-desc">CLIS V2 only displays articles retrieved live from PubMed. If PubMed returns nothing, the app shows an error — never simulated or fabricated citations.</div>
+    </div>
+    <div class="ethics-card">
+      <div class="ethics-title">Data privacy</div>
+      <div class="ethics-desc">No patient data is stored. Clinical queries are session-scoped. Only anonymised query text and bandit feedback persist to SQLite.</div>
+    </div>
+    <div class="ethics-card">
+      <div class="ethics-title">RL interpretability</div>
+      <div class="ethics-desc">The System Analytics tab shows exactly which query strategy the bandit selected, current reward estimates, and how RLHF feedback shifted the policy.</div>
+    </div>
+    <div class="ethics-card">
+      <div class="ethics-title">Decision support only</div>
+      <div class="ethics-desc">Every interface element explicitly labels CLIS V2 as decision support, not autonomous clinical decision-making. Physician review required.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Benchmark results visual -->
+<section style="padding:0 2rem 5rem;max-width:1100px;margin:0 auto">
+  <div class="reveal">
+    <div style="font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green-lt);margin-bottom:.8rem">Benchmark Suite</div>
+    <h3 style="font-family:var(--serif);font-size:1.6rem;font-weight:400;margin-bottom:.8rem">10/10 tests passing</h3>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.5rem">Including TC10 — the hallucination trap. A query about the CARDIAC-PREVENT trial, which does not exist. The system must refuse to fabricate results.</p>
+  </div>
+  <div class="reveal" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+    <div style="background:var(--bg2);border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#0a5c45;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#9fe1cb;flex-shrink:0">01</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">Simple treatment query</div><div style="font-size:.68rem;color:var(--dim);font-family:var(--mono)">Baseline · PASS</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#0a5c45;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#9fe1cb;flex-shrink:0">02</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">Conflicting evidence</div><div style="font-size:.68rem;color:var(--dim);font-family:var(--mono)">Conflict detection · PASS</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#0a5c45;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#9fe1cb;flex-shrink:0">03</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">Evidence limitation</div><div style="font-size:.68rem;color:var(--dim);font-family:var(--mono)">CKD population · PASS</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#0a5c45;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#9fe1cb;flex-shrink:0">04</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">Guideline recency</div><div style="font-size:.68rem;color:var(--dim);font-family:var(--mono)">Aspirin update · PASS</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid rgba(229,74,74,.3);border-left:2px solid #c0392b;border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#712b13;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#f0997b;flex-shrink:0">05</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">Drug interaction</div><div style="font-size:.68rem;color:#9c2b2b;font-family:var(--mono)">CRITICAL · PASS</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid rgba(229,74,74,.3);border-left:2px solid #c0392b;border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#712b13;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#f0997b;flex-shrink:0">06</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">Pediatric population</div><div style="font-size:.68rem;color:#9c2b2b;font-family:var(--mono)">CRITICAL · PASS</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#0a5c45;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#9fe1cb;flex-shrink:0">07</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">Rare disease evidence</div><div style="font-size:.68rem;color:var(--dim);font-family:var(--mono)">Evidence quality · PASS</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#0a5c45;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#9fe1cb;flex-shrink:0">08</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">ICD-10 coding</div><div style="font-size:.68rem;color:var(--dim);font-family:var(--mono)">E11.22 + N18.x · PASS</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#0a5c45;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#9fe1cb;flex-shrink:0">09</div>
+      <div><div style="font-size:.78rem;font-weight:500;color:var(--text)">Emerging evidence</div><div style="font-size:.68rem;color:var(--dim);font-family:var(--mono)">GLP-1 / recency · PASS</div></div>
+    </div>
+    <div style="background:#0a1a14;border:1.5px solid #1d9e75;border-radius:8px;padding:1rem 1.2rem;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:#1d9e75;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#060d0a;flex-shrink:0;font-weight:700">10</div>
+      <div><div style="font-size:.78rem;font-weight:600;color:#9fe1cb">Hallucination trap</div><div style="font-size:.68rem;color:#1d9e75;font-family:var(--mono)">CARDIAC-PREVENT · REFUSED</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section reveal">
+  <h2>Explore the full system</h2>
+  <p>All code, notebooks, trained models, and results are publicly available on GitHub.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="https://github.com/hritikhassani/CLIS_V2" target="_blank" class="btn-primary">View on GitHub</a>
+    <a href="https://github.com/hritikhassani/CLIS_V2/blob/main/README.md" target="_blank" class="btn-secondary">Read the docs</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>Hritik Ram &nbsp;·&nbsp; Northeastern University &nbsp;·&nbsp; INFO 7375 — Generative AI &amp; Prompt Engineering &nbsp;·&nbsp; Spring 2026</p>
+  <p style="margin-top:6px">Advised by Professor Nik Bear Brown &nbsp;·&nbsp; <a href="https://github.com/hritikhassani/CLIS_V2" target="_blank">github.com/hritikhassani/CLIS_V2</a></p>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => obs.observe(r));
+</script>
+
+</body>
+</html>
