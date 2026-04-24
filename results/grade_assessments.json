@@ -1,0 +1,105 @@
+{
+  "clinical_question": "Is metformin effective for glycemic control in type 2 diabetes?",
+  "n_articles": 5,
+  "summary": {
+    "n_articles": 5,
+    "mean_score": 0.3,
+    "max_score": 0.7,
+    "min_score": 0.05,
+    "grade_counts": {
+      "VERY_LOW": 3,
+      "MODERATE": 1,
+      "LOW": 1
+    },
+    "top_grade": "MODERATE",
+    "top_article": "Systematic review: oral hypoglycemics in T2DM \u2014 42 RCTs",
+    "pct_high_mod": 20.0
+  },
+  "assessments": [
+    {
+      "rank": 1,
+      "title": "Systematic review: oral hypoglycemics in T2DM \u2014 42 RCTs",
+      "grade_level": "MODERATE",
+      "grade_score": 0.7,
+      "grade_symbol": "\u2295\u2295\u2295\u229d",
+      "study_design": "Systematic review / meta-analysis",
+      "rl_reward": 0.7,
+      "recommendation": "Strong",
+      "main_finding": "Metformin showed the best glycemic efficacy with HbA1c reduction of 1.1% (95% CI: 0.9-1.3%)",
+      "pico": {
+        "population": "Adults with type 2 diabetes",
+        "intervention": "Metformin",
+        "comparison": "Other oral hypoglycemic agents",
+        "outcome": "HbA1c reduction"
+      }
+    },
+    {
+      "rank": 2,
+      "title": "Metformin vs placebo in T2DM: A randomized controlled trial (n=500)",
+      "grade_level": "LOW",
+      "grade_score": 0.6,
+      "grade_symbol": "\u2295\u2295\u229d\u229d",
+      "study_design": "Randomized controlled trial",
+      "rl_reward": 0.64,
+      "recommendation": "Weak",
+      "main_finding": "Metformin reduced HbA1c by 1.2% compared to 0.1% with placebo",
+      "pico": {
+        "population": "Patients aged 40-70 with newly diagnosed type 2 diabetes mellitus",
+        "intervention": "Metformin 1000mg twice daily",
+        "comparison": "Placebo",
+        "outcome": "HbA1c reduction"
+      }
+    },
+    {
+      "rank": 3,
+      "title": "Long-term metformin use and cardiovascular outcomes: cohort study (n=12,000)",
+      "grade_level": "VERY_LOW",
+      "grade_score": 0.1,
+      "grade_symbol": "\u2295\u229d\u229d\u229d",
+      "study_design": "Cohort study",
+      "rl_reward": 0.34,
+      "recommendation": "Weak",
+      "main_finding": "Metformin users showed 18% lower cardiovascular mortality compared to non-users",
+      "pico": {
+        "population": "12,000 patients with type 2 diabetes mellitus (T2DM)",
+        "intervention": "Metformin use",
+        "comparison": "No comparator (observational study)",
+        "outcome": "Cardiovascular mortality"
+      }
+    },
+    {
+      "rank": 4,
+      "title": "Metformin adherence patterns in elderly patients: observational study",
+      "grade_level": "VERY_LOW",
+      "grade_score": 0.05,
+      "grade_symbol": "\u2295\u229d\u229d\u229d",
+      "study_design": "Cross-sectional study",
+      "rl_reward": 0.31,
+      "recommendation": "Weak",
+      "main_finding": "Metformin adherence was 62% at 6 months, with GI side effects and polypharmacy being main barriers",
+      "pico": {
+        "population": "Elderly patients with type 2 diabetes (age >75) in a single center",
+        "intervention": "Metformin",
+        "comparison": "No comparator",
+        "outcome": "Metformin adherence"
+      }
+    },
+    {
+      "rank": 5,
+      "title": "Case report: lactic acidosis with metformin in renal impairment",
+      "grade_level": "VERY_LOW",
+      "grade_score": 0.05,
+      "grade_symbol": "\u2295\u229d\u229d\u229d",
+      "study_design": "Case report",
+      "rl_reward": 0.31,
+      "recommendation": "Weak",
+      "main_finding": "The patient developed metformin-associated lactic acidosis, which was resolved after hemodialysis",
+      "pico": {
+        "population": "A 68-year-old patient with type 2 diabetes and chronic kidney disease stage 3",
+        "intervention": "Metformin",
+        "comparison": "No comparator",
+        "outcome": "Development of lactic acidosis"
+      }
+    }
+  ]
+}
